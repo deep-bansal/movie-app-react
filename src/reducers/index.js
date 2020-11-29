@@ -23,7 +23,7 @@ export function movies (state = initialMoviesState, action){
     // }
     // return state;
 
-    console.log('MOVIES REDUCER');
+    // console.log('MOVIES REDUCER');
 
     switch(action.type) {
         case ADD_MOVIES: 
