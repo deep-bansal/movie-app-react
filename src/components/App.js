@@ -1,27 +1,19 @@
 import React from 'react';
-import { data } from '../data';
+import { data as moviesList } from '../data';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
 import {addMovies, setShowFavourites} from '../actions';
-import { StoreContext } from '../index' 
+import { connect } from '../index' 
 
 
 class App extends React.Component {  
 
   componentDidMount(){
-    const {store} = this.props;
-    store.subscribe(() => {
-      console.log('UPDATED');
-      this.forceUpdate();
-    })
-    //make api call
-    //dispatch action
-    store.dispatch(addMovies(data));
-    console.log('STATE',this.props.store.getState());
+   this.props.dispatch(addMovies(moviesList));
   }
 
   isMovieFavourite = (movie) => {
-    const {movies} = this.props.store.getState();
+    const {movies} = this.props;
 
     const index = movies.favourites.indexOf(movie);
 
@@ -33,15 +25,14 @@ class App extends React.Component {
 
   }
   onChangeTab = (val) =>{
-    this.props.store.dispatch(setShowFavourites(val));
+    this.props.dispatch(setShowFavourites(val));
 
   }
 
 
   render() {
-    const {movies,search} = this.props.store.getState();  //{movies: {}, search: {} }
+    const {movies,search} = this.props;  //{movies: {}, search: {} }
     const {list, favourites, showFavourites} = movies;
-    console.log('render',this.props.store.getState());
     const displayMovies = showFavourites ? favourites: list;
 
       return (
@@ -57,7 +48,7 @@ class App extends React.Component {
               {displayMovies.map((movie,index) => (
                 <MovieCard movie={movie}
                 key = {`movies-${index}`}
-                dispatch = {this.props.store.dispatch}
+                dispatch = {this.props.dispatch}
                 isFavourite = {this.isMovieFavourite(movie)}/>
               ))}
             </div>
@@ -69,19 +60,30 @@ class App extends React.Component {
   }
 }
 
-class AppWrapper extends React.Component{
+// class AppWrapper extends React.Component{
 
-  render(){
+//   render(){
 
-    return(
-      <StoreContext.Consumer>
-        {(store) => <App store = {store} />}
-      </StoreContext.Consumer>
-    )
+//     return(
+//       <StoreContext.Consumer>
+//         {(store) => <App store = {store} />}
+//       </StoreContext.Consumer>
+//     )
     
-  }
+//   }
  
 
+// }
+
+//wrapping up component is also a cumbersome process so we have developed a new method connect method
+
+function mapStateToProps (state){
+  return {
+    movies: state.movies,
+    search: state.search
+  };
 }
 
-export default AppWrapper;
+const connectedAppComponent = connect(mapStateToProps)(App);
+
+export default connectedAppComponent;

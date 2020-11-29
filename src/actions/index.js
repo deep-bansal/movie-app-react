@@ -47,7 +47,7 @@ export function handleMovieSearch(movie){
 
         return function(dispatch){
 
-            fetch(url)
+        fetch(url)
         .then(response => response.json())
         .then(movie => {
             console.log(movie);
